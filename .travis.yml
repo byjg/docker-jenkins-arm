@@ -1,19 +1,13 @@
 language: python
 
-python:
-  - 3.8
-
 services:
   - docker
 
-install:
-  - docker pull byjg/k8s-ci
-
-script:
-  - docker run --privileged -v  /tmp/z:/var/lib/containers -it --rm -v $PWD:/work -w /work -e DOCKER_USERNAME=$DOCKER_USERNAME -e DOCKER_PASSWORD=$DOCKER_PASSWORD -e DOCKER_REGISTRY=$DOCKER_REGISTRY byjg/k8s-ci /work/build.sh
-
 jobs:
   include:
+    - stage: Build image
+      install: docker pull byjg/k8s-ci
+      script: docker run --privileged -v  /tmp/z:/var/lib/containers -it --rm -v $PWD:/work -w /work -e DOCKER_USERNAME=$DOCKER_USERNAME -e DOCKER_PASSWORD=$DOCKER_PASSWORD -e DOCKER_REGISTRY=$DOCKER_REGISTRY byjg/k8s-ci /work/build.sh
     - stage: documentation
       if: (branch = master) AND (NOT (type IN (pull_request)))
       install: skip
